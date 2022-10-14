@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import Error from "./Error";
 
-const Formulario = ({ setPacientes, pacientes }) => {
+const Formulario = ({ setPacientes, pacientes, paciente, setPaciente }) => {
+  const generarId = () => {
+    const fecha = Date.now().toString(36);
+    const random = Math.random().toString(36).substr(2);
+    return random + fecha;
+  };
   const [formulario, setFormulario] = useState({
     mascota: "",
     propietario: "",
@@ -9,7 +14,14 @@ const Formulario = ({ setPacientes, pacientes }) => {
     alta: "",
     sintomas: "",
   });
+
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (Object.keys(paciente).length > 0) {
+      setFormulario(paciente);
+    }
+  }, [paciente]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,7 +39,19 @@ const Formulario = ({ setPacientes, pacientes }) => {
       return;
     }
     setError(false);
-    setPacientes([...pacientes, formulario]);
+    const objetoPaciente = formulario;
+    if (paciente.id) {
+      objetoPaciente.id = paciente.id;
+      const actualizarPaciente = pacientes.map((pacienteState) =>
+        pacienteState.id === paciente.id ? objetoPaciente : pacienteState
+      );
+
+      setPacientes(actualizarPaciente);
+      setPaciente({});
+    } else {
+      objetoPaciente.id = generarId();
+      setPacientes([...pacientes, objetoPaciente]);
+    }
     setFormulario({
       mascota: "",
       propietario: "",
@@ -137,7 +161,7 @@ const Formulario = ({ setPacientes, pacientes }) => {
         <input
           type="submit"
           className="bg-indigo-600 w-full p-3 mt-5 text-white uppercase font-bold hover:bg-indigo-800 cursor-pointer transition-all"
-          value="Agregar Paciente"
+          value={paciente.id ? "Editar Paciente" : "Agregar Paciente"}
         />
       </form>
     </div>
