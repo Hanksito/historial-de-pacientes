@@ -1,12 +1,19 @@
+import swal from "sweetalert";
+
 const Pacientes = ({ paciente, setPaciente, eliminandoPaciente }) => {
   const { mascota, propietario, email, alta, sintomas, id } = paciente;
 
   const handleEliminar = () => {
-    const respuesta = confirm("Deseas eliminar este paciente");
-
-    if (respuesta) {
-      eliminandoPaciente(id);
-    }
+    const respuesta = swal({
+      title: "Eliminar Paciente",
+      text: "Estás seguro que deseas eliminar este paciente",
+      icon: "warning",
+      buttons: ["no", "si"],
+    }).then((respuestaAlerta) => {
+      if (respuestaAlerta === true) {
+        eliminandoPaciente(id);
+      }
+    });
   };
 
   return (
